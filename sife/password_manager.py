@@ -79,7 +79,6 @@ class TailorSearch(Search):
 
     def get_lcs_matches(self):
         matches = []
-        print(self.to_search)
         for website, password, username in self.search_arr:
             lcs = self.longest_common_subsequence(self.to_search, website)
             if len(lcs) != 0:
@@ -174,11 +173,8 @@ class password_manager:
     def find_password(self, website, username):
         query = f'SELECT password FROM passwords WHERE website = "{website}" AND username = "{username}";'
         password = self.sqh.execute(query)
-        # print(username)
-        # print(website)
         if password == []:
             res = self.find_candidate_passwords(website)
-            print("candidate passwords: ", res)
             return res
         else:
             # if self.encrypted is True:
@@ -195,7 +191,6 @@ class password_manager:
         result = self.sqh.get_result()
         search = TailorSearch(result, website)
         matches = search.get_lcs_matches()
-        print(matches)
         res = []
         for match in matches:
             if match[3] >= len(match[0]) / 2:
@@ -206,7 +201,6 @@ class password_manager:
         does_exist = self.verify_for_double_insertions(website, username)
         # if self.encrypted is True:
         #     password = self.encryption.encrypt(password)
-        print("Username: ", username)
         username = 'NULL' if username == '' else username
         if website[0] == '@':
             website = website[1:]

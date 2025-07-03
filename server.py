@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import make_response
 from flask import render_template
 from flask import request
 from sife.password_manager import password_manager
@@ -34,16 +35,16 @@ def fn_pwd():
                     website, password_, username = keys
                     matched_arr.append([website, password_, username])
             
-            return render_template("fn-result.html", passwords=matched_arr)
+            response = make_response(render_template("fn-result.html", passwords=matched_arr))
+            response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private, max-age=0'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+            return response
         else:
             return render_template("fn-result.html", passwords=password)
         
         
 
-        exit()
-        for p in password:
-            print(p[1])
-        return render_template("fn-result.html", passwords=password)
     
 
     return render_template("fn-pwd.html")
@@ -83,14 +84,12 @@ def delete():
     username = 'NULL' if username == '' else username
     master_password = request.form.get('master_password')
     pm = password_manager('sife/data/passwords.db', master_password)
-    print(website, username)
     pm.sqh.delete_password(website, username)
 
     return "Password deleted"
 
 @app.route("/show", methods=['GET', 'POST'])
 def show():
-    print(request.method)
     master_password = request.form.get('master_password')
     pm = password_manager('sife/data/passwords.db', master_password)
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>find password result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}"
+</head>
+<body style="background-color: #081120;">
+    <h1 style="color: white;">find password results</h1>
+   <table style="color: white;" id="candidatePasswords" class="table">
+    <thead>
+        <tr>
+            <th scope="col">website</th>
+            <th scope="col">password</th>
+            <th scope="col">username</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for password in passwords %}
+    <tr>
+        <!-- <th>{{ password[0] }}</th>
+        <th>{{ password[1] }}</th>
+        <th>{{ password[2] }}</th> -->
+        <th><button style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a; "onclick="copyBtn('{{ password[0] }}')">{{ password[0] }}</button></th>
+        <th><button style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a; "onclick="copyBtn('{{ password[1] }}')">{{ password[1] }}</button></th>
+        <th><button style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a; "onclick="copyBtn('{{ password[2] }}')">{{ password[2] }}</button></th>
+    </tr>
+    {% endfor %}
+    </tbody>
+   </table> 
+   <script>
+    function copyBtn(copyString) {
+        navigator.clipboard.writeText(copyString)
+    }
+   </script>
+</body>
+</html>

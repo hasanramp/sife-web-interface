@@ -1,38 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>find password result</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}"
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>find password result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+  <style>
+    body {
+      background-color: #081120;
+      color: white;
+      font-family: sans-serif;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px 24px;
+      text-align: center;
+    }
+    .cell-clickable {
+      cursor: pointer;
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 4px;
+      background-color: #11518a;
+      color: powderblue;
+      font-size: 14px;
+    }
+    .eye-icon {
+      font-size: 16px;
+      cursor: pointer;
+      margin-left: 8px;
+      user-select: none;
+    }
+    .cell-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
 </head>
-<body style="background-color: #081120;">
-    <h1 style="color: white;">find password results</h1>
-   <table style="color: white;" id="candidatePasswords" class="table">
+<body>
+  <h1>find password results</h1>
+  <table id="candidatePasswords" class="table">
     <thead>
-        <tr>
-            <th scope="col">website</th>
-            <th scope="col">password</th>
-            <th scope="col">username</th>
-        </tr>
+      <tr>
+        <th>website</th>
+        <th>password</th>
+        <th>username</th>
+      </tr>
     </thead>
     <tbody>
     {% for password in passwords %}
     <tr>
-        <!-- <th>{{ password[0] }}</th>
-        <th>{{ password[1] }}</th>
-        <th>{{ password[2] }}</th> -->
-        <th><button style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a; "onclick="copyBtn('{{ password[0] }}')">{{ password[0] }}</button></th>
-        <th><button style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a; "onclick="copyBtn('{{ password[1] }}')">{{ password[1] }}</button></th>
-        <th><button style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a; "onclick="copyBtn('{{ password[2] }}')">{{ password[2] }}</button></th>
+      <td>
+        <span class="cell-clickable" onclick="copyText('{{ password[0] }}')">{{ password[0] }}</span>
+      </td>
+      <td>
+        <div class="cell-content">
+          <span class="cell-clickable" id="pw-{{ loop.index }}" onclick="copyText('{{ password[1] }}')">••••••••</span>
+          <span class="eye-icon" onclick="togglePassword({{ loop.index }}, '{{ password[1] }}')">👁️</span>
+        </div>
+      </td>
+      <td>
+        <span class="cell-clickable" onclick="copyText('{{ password[2] }}')">{{ password[2] }}</span>
+      </td>
     </tr>
     {% endfor %}
     </tbody>
-   </table> 
-   <script>
-    function copyBtn(copyString) {
-        navigator.clipboard.writeText(copyString)
+  </table> 
+
+  <script>
+    function copyText(text) {
+      navigator.clipboard.writeText(text)
+        .then(() => console.log("Copied:", text))
+        .catch(err => console.error("Copy failed:", err));
     }
-   </script>
+
+    function togglePassword(index, actualPassword) {
+      const span = document.getElementById(`pw-${index}`);
+      const icon = span.nextElementSibling;
+      const isHidden = span.textContent.includes('•');
+
+      if (isHidden) {
+        span.textContent = actualPassword;
+        icon.textContent = '🙈'; // Eye-off icon
+      } else {
+        span.textContent = '••••••••';
+        icon.textContent = '👁️'; // Eye icon
+      }
+    }
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted || window.performance?.navigation?.type === 2) {
+        // Force reload if page was loaded from bfcache or Back/Forward
+        window.location.reload();
+        }
+    });
+  </script>
 </body>
 </html>
