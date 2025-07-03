@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Password</title>
+</head>
+<body>
+    <!-- <div class="input-group">
+        <span class="input-group-text">With textarea</span>
+        <textarea id="passwordInput" class="form-control" aria-label="With textarea"></textarea>
+    </div>
+    <button id="submitBtn" type="button" class="btn btn-danger" onclick="getInputText()">submit</button> -->
+    <div style="text-align: center;">
+        <form style="display: inline-block; font-size: 50px;" method="POST">
+        <div class="form-group">
+            <label for="InputWebsite">Enter website</label>
+            <input name="InputWebsite" type="webstite" class="form-control" id="InputWebsite" aria-describedby="emailHelp" placeholder="Enter website">
+            <label for="InputUsername">Enter username</label>
+            <input name="InputUsername" type="username" class="form-control" id="InputUsername" aria-describedby="emailHelp" placeholder="Enter website">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script>
+    console.log("hello world")
+    function getInputText() {
+        console.log(document.getElementById("passwordInput").value)
+        let submitBtn = document.getElementById("submitBtn")
+        submitBtn.classList.remove("btn-danger")
+        submitBtn.classList.add("btn-success")
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup</title>
+</head>
+<body>
+    <form method="POST">
+        <h1>Backup Settings</h1>
+        <label for="MasterPassword">Master Password: </label>
+        <input type="password" placeholder="Master Password" id="MasterPassword" name="master_password">
+        <br>
+        <input type="checkbox" placeholder="cloud" id="inputCloud" name="cloud">
+        <label for="inputCloud">Cloud</label>
+
+        <br>
+        <input type="text" placeholder="Access Token: " id="access_token" name="access_token">
+        <br>
+
+        <p>Select compression type: </p>
+        <input type="radio" id="gz" value="gz" name="compression"> 
+        <label>gz</label>
+        <input type="radio" id="zip" value="zip" name="compression"> 
+        <label>zip</label>
+
+        
+        <br>
+        <br>
+
+        <p>Select filetype: </p>
+        <input type="radio" id="hdn" value="hdn" name="filetype"> 
+        <label>hdn</label>
+        <input type="radio" id="excel" value="excel" name="filetype"> 
+        <label>excel</label>
+
+        <br>
+        <br>
+        <button formaction="/backup/create" type="submit">create</button>
+        <button formaction="/backup/load" type="submit">load</button>
+
+    </form>
+</body>
+</html>

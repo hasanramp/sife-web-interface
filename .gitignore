@@ -1,0 +1,9 @@
+sife/test.py
+sife/encryption/
+sife/__pycache__
+sife/.vscode
+sife/node_modules/
+sife/sife.egg-info
+sife/venv
+venv/
+__pycache__

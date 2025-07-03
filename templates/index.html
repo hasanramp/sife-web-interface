@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sife</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+</head>
+<body style="background-color: #081120;">
+
+    <div class="container">
+        <div class="center">
+
+            <form method="POST" action="/fn-pwd">
+                <h1 style="text-align: center; color: #3F4F67">Find Password</h1>
+                <input id="MasterPassword" name="master_password" type="password" placeholder="Master Password: " style="background-color: powderblue; height: auto; padding: 12px; font-size: 1rem; width: 100%; max-width: 250px;">
+                <br>
+                <br>
+                <input id="Website" name="Website" type="text" placeholder="Website: " style="background-color: powderblue; height: auto; padding: 12px; font-size: 1rem; width: 100%; max-width: 250px;">
+                <br>
+                <br>
+                <input id="Password" name="Password" type="password" placeholder="Password: " style="background-color: powderblue; height: auto; padding: 12px; font-size: 1rem; width: 100%; max-width: 250px;">
+                <br>
+                <br>
+                <input id="Username" name="Username" type="text" placeholder="Username: " style="background-color: powderblue; height: auto; padding: 12px; font-size: 1rem; width: 100%; max-width: 250px;">
+                <br>
+                <br>
+                <table>
+                    <tr>
+                        <!-- <th><button onclick="submitFindPassword()" style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a;" type="submit">Find Password</button></th> -->
+                        <th><button formaction="/fn-pwd" style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a;" type="submit">Find Password</button></th>
+                        <!-- <th><button onclick="submitEnterPassword()" style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a;" type="submit">Enter Password</button></th> -->
+                        <th><button formaction="/en-pwd" style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a;" type="submit">Enter Password</button></th>
+                        <!-- <th><button onclick="submitGeneratePassword()" style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a;" type="submit">Generate Password</button></th> -->
+                        <th><button formaction="/gen-pwd" style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a;" type="submit">Generate Password</button></th>
+                        <!-- <th><button onclick="submitDeletePassword()" style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a;" type="submit">Delete Password</button></th> -->
+                        <th><button formaction="/delete" style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a;" type="submit">Delete Password</button></th>
+                    </tr>
+                </table>
+                <nav class="navbar">
+                
+                    <!-- Hamburger Icon -->
+                    <div class="hamburger" onclick="toggleMenu()">
+                        &#9776; <!-- Unicode for ☰ -->
+                    </div>
+                
+                    <!-- Menu Links -->
+                    <ul class="nav-links" id="nav-links">
+                        <li><a href="/backup">Backup</a></li>
+                        <li><a href="/setup">Setup</a></li>
+                        <li><button type="submit" formaction="/show">Show</button></li>
+                    </ul>
+                </nav>
+            
+
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById("nav-links").classList.toggle("active");
+        }
+
+        function submitFindPassword() {
+            console.log(document.getElementById("Website").value)
+            fetch('/fn-pwd', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: document.getElementById("Username").value, website: document.getElementById("Website").value })
+                
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.open()
+                document.write(html)
+                document.close()
+            })
+        }
+
+        function submitEnterPassword() {
+            fetch('/en-pwd', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({password: document.getElementById("Password").value, username: document.getElementById("Username").value, website: document.getElementById("Website").value })
+                
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.open()
+                document.write(html)
+                document.close()
+            })
+        }
+
+        function submitGeneratePassword() {
+            let website = document.getElementById("Website").value
+            let username = document.getElementById("Username").value
+
+            fetch('/gen-pwd', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ website: website, username: username})
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.open()
+                document.write(html)
+                document.close()
+            })
+        }
+
+        function submitDeletePassword() {
+            let website = document.getElementById("Website").value
+            let username = document.getElementById("Username").value
+
+            fetch('/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ website: website, username: username})
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.open()
+                document.write(html)
+                document.close()
+            })
+
+        }
+        
+    </script>
+</body>
+</html>
