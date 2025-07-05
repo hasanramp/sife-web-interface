@@ -4,8 +4,16 @@ from flask import render_template
 from flask import request
 from sife.password_manager import password_manager
 import os
+from hashlib import sha3_256
 
 app = Flask(__name__)
+
+def authenticate(password):
+    pass_hash = sha3_256(password.encode('utf-8')).hexdigest()
+    with open('sife/data/hash', 'r') as f:
+        stored_hash = f.read()
+    
+    return pass_hash == stored_hash 
 
 @app.route("/")
 def index():
@@ -17,6 +25,8 @@ def fn_pwd():
         website = request.form.get('Website')
         username = request.form.get('Username')
         master_password = request.form.get('master_password')
+        if not authenticate(master_password):
+            return "Authentication failed"
         pm = password_manager('sife/data/passwords.db', master_password)
     
         if username == '':
@@ -57,6 +67,8 @@ def en_pwd():
         username = request.form.get('Username')
         password = request.form.get('Password')
         master_password = request.form.get('master_password')
+        if not authenticate(master_password):
+            return "Authentication failed"
         pm = password_manager('sife/data/passwords.db', master_password)
         res = pm.enter_password(website, password, username)
         if res != None:
@@ -72,6 +84,8 @@ def gen_pwd():
 
     website = request.form.get("Website")
     master_password = request.form.get('master_password')
+    if not authenticate(master_password):
+        return "Authentication failed"
     pm = password_manager('sife/data/passwords.db', master_password)
 
     password = pm.generate(website, 10, username)
@@ -83,6 +97,8 @@ def delete():
     username = request.form.get('Username')
     username = 'NULL' if username == '' else username
     master_password = request.form.get('master_password')
+    if not authenticate(master_password):
+        return "Authentication failed"
     pm = password_manager('sife/data/passwords.db', master_password)
     pm.sqh.delete_password(website, username)
 
@@ -91,6 +107,8 @@ def delete():
 @app.route("/show", methods=['GET', 'POST'])
 def show():
     master_password = request.form.get('master_password')
+    if not authenticate(master_password):
+        return "Authentication failed"
     pm = password_manager('sife/data/passwords.db', master_password)
 
     result = pm.sqh.get_result()
@@ -106,6 +124,8 @@ def backup(function):
 
         cloud = request.form.get('cloud')
         master_password = request.form.get('master_password')
+        if not authenticate(master_password):
+            return "Authentication failed"
         compression = request.form.get('compression')
         access_token = request.form.get('access_token')        
         filetype = request.form.get('filetype')
@@ -140,6 +160,9 @@ def setup():
         from sife.encryption import encrypt_file
         from sife.db.sqlite3_handler import sql_handler
         master_password = request.form.get("master_password")
+        with open("sife/data/hash", 'w') as f:
+            pass_hash = sha3_256(master_password.encode('utf-8')).hexdigest()
+            f.write(pass_hash)
         with open("sife/data/passwords.db", 'w') as f:
             pass
         encrypt_file('sife/data/passwords.db', master_password)
