@@ -44,10 +44,7 @@ def decrypt_file(encrypted_file: str, password: str):
     key = derive_key(password, salt)
     fernet = Fernet(key)
 
-    try:
-        decrypted_data = fernet.decrypt(encrypted_data)
-    except Exception as e:
-        return
+    decrypted_data = fernet.decrypt(encrypted_data)
 
     original_file = encrypted_file.replace('.enc', '')
     with open(original_file, 'wb') as f:

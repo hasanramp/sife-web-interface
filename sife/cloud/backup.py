@@ -30,11 +30,12 @@ def get_github_config():
 
 
 class Backup:
-    def __init__(self, password, compress_file_type='gz', cloud=False, access_token=None, cloud_client='github'):
+    def __init__(self, password, compress_file_type='gz', cloud=False, access_token=None, cloud_client='github', repo='None'):
         # self.username, self.password = get_username_and_password()
         self.cmp_format = compress_file_type
         self.password = password
         db_engine = get_db_engine()
+        self.repo = repo
         self.db_engine = db_engine
         if db_engine == 'sqlite3':
             from sife.db.sqlite3_handler import sql_handler
@@ -49,10 +50,17 @@ class Backup:
                 self.csh = CloudStorageHandler(access_token)
             else:
                 token, repo = get_github_config()
+                if self.repo is not None:
+                    repo = self.repo
+                if access_token is not None:
+                    token = access_token
                 self.csh = GithubCLoud(token, repo)
             
     def create_backup(self, default_path, default_dir=''):
-        backup_file = os.path.join(default_path, 'password_backup.xlsx')
+        if default_path is None:
+            default_path = os.path.join('sife/data', 'password_backup.xlsx')
+        else:
+            default_path = os.path.join(default_path, 'password_backup.xlsx')
         try:
             wb = xl.load_workbook(backup_file)
         except FileNotFoundError:
@@ -61,10 +69,6 @@ class Backup:
             wb.save(backup_file)
         result = self.sqh.get_result()
         if self.cloud is False:
-            if default_path is None:
-                default_path = os.path.join('sife/data', 'password_backup.xlsx')
-            else:
-                default_path = os.path.join(default_path, 'password_backup.xlsx')
             index = 1
             sheet = wb['Sheet1']
             for r in result:
@@ -147,12 +151,13 @@ class Backup:
         self.csh.upload('password_backup.xlsx', dir=default_dir)
 
 class Backup_hdn:
-    def __init__(self, password, compress_file_type=None, cloud=False, access_token=None, cloud_client='github'):
+    def __init__(self, password, compress_file_type=None, cloud=False, access_token=None, cloud_client='github', repo=None):
         # self.username, self.password = get_username_and_password()
         self.cmp_format = compress_file_type
         self.password = password
         # self.compressed = compressed
         db_engine = get_db_engine()
+        self.repo = repo
         if db_engine == 'sqlite3':
             from sife.db.sqlite3_handler import sql_handler
             self.sqh = sql_handler(database='sife/data/passwords.db', password=password)
@@ -168,15 +173,19 @@ class Backup_hdn:
                 self.csh = CloudStorageHandler(access_token)
             else:
                 token, repo = get_github_config()
+                if self.repo is not None:
+                    repo = self.repo
+                if access_token is not None:
+                    token = access_token
                 self.csh = GithubCLoud(token, repo)
         
         
     def create_backup(self, default_path, default_dir=''):
+        if default_path is None:
+            default_path = os.path.join('sife/data', 'backup.hdn')
+        else:
+            default_path = os.path.join(default_path, 'backup.hdn')
         if self.cloud is False:
-            if default_path is None:
-                default_path = os.path.join('sife/data', 'backup.hdn')
-            else:
-                default_path = os.path.join(default_path, 'backup.hdn')
             lines = self.sqh.get_result()
             hdn_parser = self.hdn_parser
             hdn_str = hdn_parser.write_in_hdn(lines)
@@ -193,22 +202,22 @@ class Backup_hdn:
             encrypt_file(default_path, self.password)
             if type(self.cmp_format) == str:
                 compressed_backup_filename = compress_file('sife/data/backup.hdn.enc', self.cmp_format)
-                self.csh.update('backup.hdn.enc.gz', compressed_backup_filename)
+                self.csh.update(f'backup.hdn.enc.{self.cmp_format}', compressed_backup_filename)
                 return
-            self.csh.update('backup.hdn.enc', 'data/backup.hdn.enc')
+            self.csh.update('backup.hdn.enc', 'sife/data/backup.hdn.enc')
     def load_backup(self, file='sife/data/backup.hdn', default_dir='', rows=None):
         if self.cloud is True:
             if type(self.cmp_format) == str:
                 filename = 'backup.hdn' + '.' + self.cmp_format
                 self.csh.download(filename, f'sife/data/{filename}')
                 from utils import decompress_file
-                decompress_file('sife/data/backup.hdn.' + self.cmp_format, self.cmp_format)
-                decrypt_file('sife/data/backup.hdn.enc' + self.cmp_format, self.password)
+                decompress_file('sife/data/backup.hdn.enc' + self.cmp_format, self.cmp_format)
+                decrypt_file('sife/data/backup.hdn.enc', self.password)
             else:
-                self.csh.download('backup.hdn.enc', file)
+                self.csh.download('backup.hdn.enc', file + '.enc')
                 decrypt_file(file + '.enc', self.password)
             # self.csh.download(file, dir=default_dir)
-            shutil.move(file, self.file + '.enc')
+            shutil.move(file, self.file)
         else:
             if type(self.cmp_format) == str:
                 from utils import decompress_file
@@ -222,18 +231,22 @@ class Backup_hdn:
         print('[DELETING INFO TABLE OF EXISTING DATABASE]......')
         self.sqh.delete_table()
         print('[LOADING INFO IN DATABASE].....')
-        
+        query = f"INSERT INTO {self.sqh.database_name} (website, password, username) VALUES "        
         for row in rows:
             website = row[0]
             password = row[1]
             username = row[2]
-            self.sqh.insert_password(website, password, username)
-            print(row)
+
+            query += f"('{website}', '{password}', '{username}'), "
+
+        # All characters except the last two characters
+        query = query[:-2]
+        query += ';'
+        self.sqh.execute(query)
         print('Done!')
         encrypt_file(self.file, self.password)
     
     def upload(self, file, default_dir=''):
-        print('reached here')
         self.csh.upload(file, dir=default_dir)
 
 class BackupSqlite(Backup_hdn):

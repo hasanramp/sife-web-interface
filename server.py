@@ -123,6 +123,7 @@ def backup(function):
         from sife.cloud.backup import Backup, Backup_hdn
 
         cloud = request.form.get('cloud')
+        
         master_password = request.form.get('master_password')
         if not authenticate(master_password):
             return "Authentication failed"
@@ -130,18 +131,21 @@ def backup(function):
         access_token = request.form.get('access_token')        
         filetype = request.form.get('filetype')
         cloud = True if cloud == 'on' else False
-
+        repo = request.form.get('cloud_repo')
         if cloud and access_token == '':
             pm = password_manager('sife/data/passwords.db', master_password)
             access_token = pm.find_password('githubToken', 'githubToken')
             if type(access_token) != str:
                 return 'Invalid access token'
+            
+        if cloud and repo == '':
+            return 'Invalid Github Repository'
 
 
         if filetype == 'hdn':
-            backup = Backup_hdn(master_password, cloud=cloud, access_token=access_token, compress_file_type=compression)
+            backup = Backup_hdn(master_password, cloud=cloud, access_token=access_token, compress_file_type=compression, repo=repo)
         else:
-            backup = Backup(master_password, cloud=cloud, access_token=access_token, compress_file_type=compression)
+            backup = Backup(master_password, cloud=cloud, access_token=access_token, compress_file_type=compression, repo=repo)
         
         if function == 'create':
             backup.create_backup(default_dir='sife/', default_path='sife/data')

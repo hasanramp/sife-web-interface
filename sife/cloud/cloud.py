@@ -122,5 +122,8 @@ class GithubCLoud:
 
     def download(self, filename, path):
         contents = self.repo.get_contents(filename, ref='main')
+        blob_sha = contents.sha
+        blob = self.repo.get_git_blob(blob_sha)
+        raw_bytes = base64.b64decode(blob.content)
         with open(path, 'wb') as f:
-            f.write(base64.b64decode(contents.content))
+            f.write(raw_bytes)
