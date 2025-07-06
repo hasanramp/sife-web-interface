@@ -242,7 +242,7 @@ class Backup_hdn:
         # All characters except the last two characters
         query = query[:-2]
         query += ';'
-        self.sqh.execute(query)
+        self.sqh.execute(query, commit=True)
         print('Done!')
         encrypt_file(self.file, self.password)
     
