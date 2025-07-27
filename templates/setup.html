@@ -3,18 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
     <title>Setup</title>
 </head>
-<body>
-    <form method="POST">
-        <h1>Sife Setup</h1>
-        <h3>WARNING: If you have an existing database, this will erase all data.</h3>
-        <br>
-        <h3>WARNING: DO NOT FORGET your master password. If you forget the password, you will be unable to retrieve the data.</h3>
-        <label for="MasterPassword">Master Password: </label>
-        <input type="password" placeholder="Master Password" id="MasterPassword" name="master_password">
-        <br>
+<body style="background-color: #081120;">
+    <div class="container">
+        <div class="center">
+            <form method="POST">
+                <h1 style="text-align: center; color: #3F4F67">Sife setup</h1>
+                <h3 style="text-align: center; color: #3F4F67">WARNING: If you have an existing database, this will erase all data.</h3>
+                <br>
+                <h3 style="text-align: center; color: #3F4F67">WARNING: DO NOT FORGET your master password. If you forget the password, you will be unable to retrieve the data.</h3>
+                <label for="MasterPassword" style="color: #3F4F67">Master Password: </label>
+                <input type="password" id="MasterPassword" name="master_password">
+                <br>
+                <br>
+                <br>
+                <button type="submit" style="padding: 12px 24px; font-size: 16px; color: powderblue; background-color: #11518a;">submit</button>
 
-    </form>
+            </form>
+
+
+        </div>
+    </div>
 </body>
 </html>

@@ -4,6 +4,18 @@
     text-align: center;
 }
 
+.center-text {
+  text-align: center;
+  color: #3F4F67;
+}
+
+.submit-btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  color: powderblue; 
+  background-color: #11518a;
+}
+
 .container {
   display: flex;
   justify-content: center;   /* horizontal */

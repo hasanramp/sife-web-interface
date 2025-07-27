@@ -3,46 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
     <title>Backup</title>
 </head>
-<body>
-    <form method="POST">
-        <h1>Backup Settings</h1>
-        <label for="MasterPassword">Master Password: </label>
-        <input type="password" placeholder="Master Password" id="MasterPassword" name="master_password">
-        <br>
-        <input type="checkbox" placeholder="cloud" id="inputCloud" name="cloud">
-        <label for="inputCloud">Cloud</label>
-        <br>
-        <label for="inputCloudRepo">Github Repo: </label>
-        <input type="text" id="inputCloudRepo" name="cloud_repo">
-
-        <br>
-        <label for="access_token">Access Token: </label>
-        <input type="password" placeholder="Access Token: " id="access_token" name="access_token">
-        <br>
-
-        <p>Select compression type: </p>
-        <input type="radio" id="gz" value="gz" name="compression"> 
-        <label>gz</label>
-        <input type="radio" id="zip" value="zip" name="compression"> 
-        <label>zip</label>
-
-        
-        <br>
-        <br>
-
-        <p>Select filetype: </p>
-        <input type="radio" id="hdn" value="hdn" name="filetype"> 
-        <label>hdn</label>
-        <input type="radio" id="excel" value="excel" name="filetype"> 
-        <label>excel</label>
-
-        <br>
-        <br>
-        <button formaction="/backup/create" type="submit">create</button>
-        <button formaction="/backup/load" type="submit">load</button>
-
-    </form>
+<body style="background-color: #081120;">
+    <div class="container">
+        <div class="center">
+            <form method="POST">
+                <h1 class="center-text">Backup Settings</h1>
+                <label for="MasterPassword" class="center-text">Master Password: </label>
+                <input type="password" placeholder="Master Password" id="MasterPassword" name="master_password">
+                <br>
+                <input type="checkbox" placeholder="cloud" id="inputCloud" name="cloud">
+                <label for="inputCloud" class="center-text">Cloud</label>
+                <br>
+                <label for="inputCloudRepo" class="center-text">Github Repo: </label>
+                <input type="text" id="inputCloudRepo" name="cloud_repo">
+            
+                <br>
+                <label for="access_token" class="center-text">Access Token: </label>
+                <input type="password" placeholder="Access Token: " id="access_token" name="access_token">
+                <br>
+            
+                <p class="center-text">Select compression type: </p>
+                <input type="radio" id="gz" value="gz" name="compression">
+                <label class="center-text">gz</label>
+                <input type="radio" id="zip" value="zip" name="compression">
+                <label class="center-text">zip</label>
+            
+            
+                <br>
+                <br>
+            
+                <p class="center-text">Select filetype: </p>
+                <input type="radio" id="hdn" value="hdn" name="filetype">
+                <label class="center-text">hdn</label>
+                <input type="radio" id="excel" value="excel" name="filetype">
+                <label class="center-text">excel</label>
+            
+                <br>
+                <br>
+                <button class="submit-btn" formaction="/backup/create" type="submit">create</button>
+                <button class="submit-btn" formaction="/backup/load" type="submit">load</button>
+            
+            </form>
+        </div>
+    </div>
 </body>
 </html>

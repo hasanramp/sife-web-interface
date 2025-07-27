@@ -39,6 +39,7 @@ def fn_pwd():
             sorted_d = dict( sorted(password.items(), key=operator.itemgetter(1),reverse=True))
             matched_arr = []
             website_length = len(website)
+            print(sorted_d)
             for keys in sorted_d:
                 matches = sorted_d[keys]
                 if matches >= website_length and len(keys[0]) <= len(website) * 3:
@@ -69,6 +70,10 @@ def en_pwd():
         master_password = request.form.get('master_password')
         if not authenticate(master_password):
             return "Authentication failed"
+        if website == '':
+            return "No website entered"
+        if password == '':
+            return "No password entered"
         pm = password_manager('sife/data/passwords.db', master_password)
         res = pm.enter_password(website, password, username)
         if res != None:
@@ -76,7 +81,8 @@ def en_pwd():
         else:
             if website[0] == '@':
                 website = website[1:]
-            return render_template('single-result.html', passwords=[[website, password, username]])
+            # return render_template('single-result.html', passwords=[[website, password, username]])
+            return render_template("fn-result.html", passwords=[[website, password, username]])
     # return render_template("en-pwd.html")
 
 @app.route("/gen-pwd", methods=['POST'])
@@ -89,7 +95,8 @@ def gen_pwd():
     pm = password_manager('sife/data/passwords.db', master_password)
 
     password = pm.generate(website, 10, username)
-    return render_template('single-result.html', passwords=[[website, password, username]])
+    # return render_template('single-result.html', passwords=[[website, password, username]])
+    return render_template("fn-result.html", passwords=[[website, password, username]])
 
 @app.route("/delete", methods=['POST'])
 def delete():
