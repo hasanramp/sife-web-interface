@@ -29,6 +29,10 @@ class Parser:
                 lines.append(items)
                 items = []
             index += 1
+        try:
+            file.close()
+        except:
+            pass
         return lines
 
     def write_in_hdn(self, lines):

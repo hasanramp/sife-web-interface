@@ -11,7 +11,7 @@ import os
 import shutil
 from sife.__init__ import get_db_engine
 from sife.encryption import encrypt_file, decrypt_file
-
+import hashlib
 
 def get_github_config():
     destination_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/github.json')
@@ -192,7 +192,7 @@ class Backup_hdn:
             hdn_parser.dump(hdn_str, default_path)
             encrypt_file(default_path, self.password)
             if type(self.cmp_format) == str:
-                compressed_backup_filename = compress_file(default_path, self.cmp_format)
+                compressed_backup_filename = compress_file(default_path + '.enc', self.cmp_format)
                 return
         else:
             lines = self.sqh.get_result()
@@ -248,6 +248,71 @@ class Backup_hdn:
     
     def upload(self, file, default_dir=''):
         self.csh.upload(file, dir=default_dir)
+    
+    def sync(self, filename):
+
+        if not self.csh.check_for_file(filename):
+            return "File doesn't exist"
+        
+        self.cloud = False
+        self.create_backup(default_dir='sife/', default_path='sife/data/')
+        decrypt_file('sife/data/backup.hdn.enc', self.password)
+        sha1 = hashlib.sha1()
+        BUF_SIZE = 65536
+        with open("sife/data/backup.hdn", "rb") as f:
+            while True:
+                data = f.read(BUF_SIZE)
+                if not data:
+                    break
+                sha1.update(data)
+        old_rows = self.hdn_parser.parse()
+        encrypt_file('sife/data/backup.hdn', self.password)
+        keys = set()
+        for row in old_rows:
+            key = row[0] + '|' + row[1] + '|' + row[2]
+            keys.add(key)
+        self.csh.download(filename, f'sife/data/{filename}')
+        decrypt_file('sife/data/backup.hdn.enc', self.password)
+        sha2 = hashlib.sha1()
+        with open("sife/data/backup.hdn", "rb") as f:
+            while True:
+                data = f.read(BUF_SIZE)
+                if not data:
+                    break
+                sha2.update(data)
+        
+        if sha1.hexdigest() == sha2.hexdigest:
+            return "Files are the same"
+        
+        rows = self.hdn_parser.parse()
+
+        new_rows = []
+        query = f"INSERT INTO {self.sqh.database_name} (website, password, username) VALUES "        
+        changed = False
+        for row in rows:
+            
+            key = row[0] + '|' + row[1] + '|' + row[2]
+            if key not in keys: 
+                changed = True
+                website, password, username = row
+                print(row)
+                query += f"('{website}', '{password}', '{username}'), "
+
+        # All characters except the last two characters
+        query = query[:-2]
+        query += ';'
+        if changed:
+            print("Changes made")
+            self.sqh.execute(query, commit=True)
+            old_rows = old_rows + new_rows
+            self.hdn_parser.dump(self.hdn_parser.write_in_hdn(old_rows), 'sife/data/backup.hdn')
+        else:
+            print("no changes")
+        
+        encrypt_file('sife/data/backup.hdn', self.password)
+        self.cloud = True
+        self.create_backup(default_dir='sife/', default_path='sife/data/')
+        return "File synced"
 
 class BackupSqlite(Backup_hdn):
     def __init__(self, cloud=False, access_token=None):

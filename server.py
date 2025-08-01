@@ -139,7 +139,7 @@ def backup(function):
         filetype = request.form.get('filetype')
         cloud = True if cloud == 'on' else False
         repo = request.form.get('cloud_repo')
-        if cloud and access_token == '':
+        if (cloud or function == 'sync') and access_token == '':
             pm = password_manager('sife/data/passwords.db', master_password)
             access_token = pm.find_password('githubToken', 'githubToken')
             if type(access_token) != str:
@@ -157,6 +157,15 @@ def backup(function):
         if function == 'create':
             backup.create_backup(default_dir='sife/', default_path='sife/data')
             return "Backup created"
+        elif function == 'sync':
+            if filetype != 'hdn':
+                return "Please choose hdn. Currently this function is only available for hdn file type."
+            
+            if not cloud:
+                return "Please choose the cloud option."
+            
+            msg = backup.sync('backup.hdn.enc')
+            return msg
         else:
             backup.load_backup(default_dir='sife/')
             return "backup loaded"

@@ -127,3 +127,10 @@ class GithubCLoud:
         raw_bytes = base64.b64decode(blob.content)
         with open(path, 'wb') as f:
             f.write(raw_bytes)
+
+    def check_for_file(self, filename):
+        try:
+            self.repo.get_contents(filename)
+            return True
+        except UnknownObjectException:
+            return False

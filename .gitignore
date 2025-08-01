@@ -10,7 +10,7 @@ __pycache__
 sife/data/passwords.db.enc
 sife/data/backup.hdn.enc
 sife/data/password_backup.xlsx.enc
-sife/data/backup.hdn.gz.enc
+sife/data/backup.hdn.enc.gz
 sife/data/password_backup.xlsx.gz.enc
 sife/data/backup.hdn.zip.enc
 sife/data/password_backup.xlsx.zip.enc
